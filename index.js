@@ -230,6 +230,7 @@ function Connection (utp, socket) {
   this._drain = null
   this._ended = false
   this._resolved = false
+  this._connected = false
 
   // set by timer
   this._idleTimeout = -1
@@ -317,6 +318,7 @@ Connection.prototype._onerror = function (error) {
 }
 
 Connection.prototype._onconnect = function () {
+  this._connected = true;
   this.emit('connect')
 }
 
@@ -334,7 +336,7 @@ Connection.prototype.address = function () {
 
 Connection.prototype._write = function (data, enc, cb) {
   if (this.destroyed) return cb()
-  if (!this._resolved) return this.once('resolve', this._write.bind(this, data, enc, cb))
+  if (!this._connected) return this.once('connect', this._write.bind(this, data, enc, cb))
   active(this)
 
   if (this._socket.write(data)) return cb()
@@ -344,7 +346,7 @@ Connection.prototype._write = function (data, enc, cb) {
 
 Connection.prototype._writev = function (batch, cb) {
   if (this.destroyed) return cb()
-  if (!this._resolved) return this.once('resolve', this._writev.bind(this, batch, cb))
+  if (!this._connected) return this.once('connect', this._writev.bind(this, batch, cb))
   active(this)
 
   if (this._socket.writev(batch)) return cb()
