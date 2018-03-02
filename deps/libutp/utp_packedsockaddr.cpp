@@ -137,3 +137,23 @@ cstr PackedSockAddr::fmt(str s, size_t len) const
 	snprintf(i, len - (i-s), ":%u", _port);
 	return s;
 }
+
+void PackedSockAddr::fmtm(str ip, size_t ip_len, uint16* port) const
+{
+	memset(ip, 0, ip_len);
+	const byte family = get_family();
+	str i;
+	if (family == AF_INET) {
+		INET_NTOP(family, (uint32*)&_sin4, ip, ip_len);
+		i = ip;
+		while (*++i) {}
+	} else {
+		i = ip;
+		*i++ = '[';
+		INET_NTOP(family, (in6_addr*)&_in._in6addr, i, ip_len-1);
+		while (*++i) {}
+		*i++ = ']';
+	}
+
+	*port = _port;
+}

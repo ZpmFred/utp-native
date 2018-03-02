@@ -34,6 +34,7 @@ private:
   static NAN_METHOD(Bind);
   static NAN_METHOD(Send);
   static NAN_METHOD(Address);
+  static NAN_METHOD(RemoteAddress);
   static NAN_METHOD(Destroy);
   static NAN_METHOD(Debug);
   static NAN_METHOD(Ref);

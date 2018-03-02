@@ -3,6 +3,7 @@
 
 #include <nan.h>
 #include "utp_uv.h"
+#include "../deps/libutp/utp_packedsockaddr.h"
 
 using namespace v8;
 
@@ -38,6 +39,7 @@ private:
 
   static NAN_METHOD(New);
   static NAN_METHOD(Context);
+  static NAN_METHOD(RemoteAddress);
   static NAN_METHOD(End);
   static NAN_METHOD(Write);
   static NAN_METHOD(Writev);

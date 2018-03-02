@@ -334,6 +334,10 @@ Connection.prototype.address = function () {
   return this._utp && this._utp.address()
 }
 
+Connection.prototype.remoteAddress = function () {
+  return this._connected && this._socket && this._socket.remoteAddress()
+}
+
 Connection.prototype._write = function (data, enc, cb) {
   if (this.destroyed) return cb()
   if (!this._connected) return this.once('connect', this._write.bind(this, data, enc, cb))

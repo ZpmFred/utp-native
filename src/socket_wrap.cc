@@ -100,6 +100,25 @@ NAN_METHOD(SocketWrap::Context) {
   self->context.Reset(context);
 }
 
+NAN_METHOD(SocketWrap::RemoteAddress) {
+  Nan::EscapableHandleScope scope;
+
+  SocketWrap *self = Nan::ObjectWrap::Unwrap<SocketWrap>(info.This());
+  const PackedSockAddr *addr = utp_get_addr(self->socket);
+
+  Local<Object> result = Nan::New<Object>();
+
+  char ip[59];
+  uint16 port;
+
+  addr->fmtm(ip, 59, &port);
+
+  Nan::Set(result, Nan::New<String>("address").ToLocalChecked(), Nan::New<String>(ip).ToLocalChecked());
+  Nan::Set(result, Nan::New<String>("port").ToLocalChecked(), Nan::New<Number>((int) port));
+
+  info.GetReturnValue().Set(scope.Escape(result));
+}
+
 NAN_METHOD(SocketWrap::Write) {
   SocketWrap *self = Nan::ObjectWrap::Unwrap<SocketWrap>(info.This());
 
@@ -198,6 +217,7 @@ void SocketWrap::Init () {
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
   Nan::SetPrototypeMethod(tpl, "context", SocketWrap::Context);
+  Nan::SetPrototypeMethod(tpl, "remoteAddress", SocketWrap::RemoteAddress);
   Nan::SetPrototypeMethod(tpl, "write", SocketWrap::Write);
   Nan::SetPrototypeMethod(tpl, "writev", SocketWrap::Writev);
   Nan::SetPrototypeMethod(tpl, "end", SocketWrap::End);
